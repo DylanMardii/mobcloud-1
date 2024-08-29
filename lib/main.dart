@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+// import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:fl_chart/fl_chart.dart';
 
 class SalesData {
   final int year;
@@ -34,7 +35,7 @@ final List<SalesData> data = [
 void main() {
   runApp(MaterialApp(
     title: 'Sales Chart',
-    home: const MyApp(),
+    home: MyApp(),
   ));
 }
 
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Testing')),
+      appBar: AppBar(title: const Text('Sales Chart')),
       body: Center(
         child: Container(
           height: 400,
@@ -58,6 +59,27 @@ class MyApp extends StatelessWidget {
                   Text(
                     'Sales Data Over The Year',
                     textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Expanded(
+                    child: LineChart(
+                      LineChartData(
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: data
+                                .map(
+                                  (e) => FlSpot(
+                                    e.year.toDouble(),
+                                    e.sales.toDouble(),
+                                  ),
+                                )
+                                .toList(),
+                          )
+                        ],
+                      ),
+                    ),
                   )
                 ],
               ),
