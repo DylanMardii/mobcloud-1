@@ -1,39 +1,42 @@
 import 'package:flutter/material.dart';
 // import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:fl_chart/fl_chart.dart';
+import 'dart:convert';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SalesData {
   final int year;
   final int sales;
 
   SalesData(this.year, this.sales);
+
+  SalesData.fromJson(Map<String, dynamic> json) : year = json['year'] as int, sales = json['sales'] as int; 
+
+  Map<String, dynamic> toJson() => {
+    'name' : year,
+    'sales' : sales
+  };
+
 }
 
-final List<SalesData> data = [
-  SalesData(0, 1500000),
-  SalesData(1, 1735000),
-  SalesData(2, 1678000),
-  SalesData(3, 1890000),
-  SalesData(4, 1907000),
-  SalesData(5, 2300000),
-  SalesData(6, 2360000),
-  SalesData(7, 1980000),
-  SalesData(8, 2654000),
-  SalesData(9, 2789070),
-  SalesData(10, 3020000),
-  SalesData(11, 3245900),
-  SalesData(12, 4098500),
-  SalesData(13, 4500000),
-  SalesData(14, 4456500),
-  SalesData(15, 3900500),
-  SalesData(16, 5123400),
-  SalesData(17, 5589000),
-  SalesData(18, 5940000),
-  SalesData(19, 6367000),
-];
+List<SalesData> data = []; 
 
-void main() {
-  runApp(MaterialApp(
+Future<void> main() async {
+
+  await Supabase.initialize(
+    url: 'https://piboagqmuewtqrxjroxw.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpYm9hZ3FtdWV3dHFyeGpyb3h3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjQ5MzcxNTQsImV4cCI6MjA0MDUxMzE1NH0.-G0z7ve6Wu-_KUWIgjU_KF6unKb-he_pC3RO6-h5nD0',
+  );
+
+  final supabase = Supabase.instance.client;
+
+  final response = await supabase
+  .from('dataPertahun')
+  .select();
+
+  data = response.map((item) => SalesData.fromJson(item)).toList();
+
+  runApp(const MaterialApp(
     title: 'Sales Chart',
     home: MyApp(),
   ));
@@ -41,7 +44,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -56,11 +58,11 @@ class MyApp extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: <Widget>[
-                  Text(
+                  const Text(
                     'Sales Data Over The Year',
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Expanded(
